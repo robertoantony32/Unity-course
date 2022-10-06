@@ -1,0 +1,123 @@
+using System.Numerics;
+using TMPro;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using Vector2 = UnityEngine.Vector2;
+using Vector3 = UnityEngine.Vector3;
+
+namespace GameFolder.Scripts.Player.Movement
+{
+   public class PlayerController : MonoBehaviour
+   {
+      private Rigidbody2D _rb;
+      private float _dir;
+      
+      
+      public Transform floorCollider;
+      public Transform playerRender;
+
+      public int comboNum;
+      private float comboTime;
+      public float dashTime;
+      public float speed;
+      public float dashForce;
+      public float jumpForce;
+
+      public LayerMask floorLayer;
+      public Animator _animator;
+      private Charater _charater;
+      public TextMeshProUGUI heartCountText;
+
+      public string currentLevel;
+      
+      private void Awake()
+      {
+         floorCollider.GetComponent<FloorCollider>();
+         _animator = playerRender.GetComponent<Animator>();
+         _charater = GetComponent<Charater>();
+
+         currentLevel = SceneManager.GetActiveScene().name;
+         
+         DontDestroyOnLoad(transform.gameObject);
+
+         TryGetComponent(out _rb);
+      }
+      private void Update()
+      {
+         if (!currentLevel.Equals(SceneManager.GetActiveScene().name))
+         {
+            currentLevel = SceneManager.GetActiveScene().name;
+            transform.position = GameObject.Find("Spawn").transform.position;
+         }
+         
+         
+         heartCountText.text = _charater.life.ToString();
+
+         if (_charater.life <= 0)
+         {
+            GetComponent<Rigidbody2D>().simulated = false;
+            enabled = false;
+         }
+
+         dashTime += Time.deltaTime;
+         if (Input.GetButtonDown("Fire2") && dashTime > 1)
+         {
+            dashTime = 0;
+            _animator.Play("dash_animation", -1);
+            _rb.velocity = Vector2.zero;
+            _rb.AddForce(new Vector2(playerRender.localScale.x * dashForce,0));
+         }
+         
+
+         comboTime += Time.deltaTime;
+         if (Input.GetKeyDown(KeyCode.Z) && comboTime > 0.3f)
+         {
+            comboNum++;
+            if (comboNum > 2)
+            {
+               comboNum = 1;
+            }
+            
+            
+            comboTime = 0;
+            _animator.Play("Attack" + comboNum, -1);
+         }
+
+         if (comboTime >= 1)
+         {
+            comboNum = 0;
+         }
+
+         bool canJump = Physics2D.OverlapCircle(floorCollider.position, 0.5f, floorLayer);
+         if (Input.GetButtonDown("Jump") && canJump)
+         {
+            _animator.Play("jump_animation", -1);
+            _rb.velocity = Vector2.zero;
+            _rb.velocity = new Vector2(_rb.velocity.x, jumpForce);
+            //_rb.AddForce(new Vector2(0,jumpForce), ForceMode2D.Impulse);
+         }
+
+         _dir = Input.GetAxisRaw("Horizontal");
+
+         if (_dir != 0)
+         {
+            playerRender.localScale = new Vector3(_dir, 1, 1);
+            _animator.SetBool("PlayerRun", true);
+         }
+         else
+         {
+            _animator.SetBool("PlayerRun", false);
+         }
+         
+      }
+
+      private void FixedUpdate()
+      {
+         if (dashTime > 0.5f)
+         {
+            _rb.velocity = new Vector2(speed * _dir, _rb.velocity.y);
+         }
+      
+      }
+   }
+}
