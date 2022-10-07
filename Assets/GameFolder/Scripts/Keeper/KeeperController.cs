@@ -13,11 +13,17 @@ namespace GameFolder.Scripts.Keeper
         public Transform keeperRender;
         public Transform keeperRange;
 
+        public AudioSource audioSource;
+        public AudioClip dieSound;
+
 
         void Update()
         {
             if (GetComponent<Charater>().life <= 0)
             {
+                
+                audioSource.PlayOneShot(dieSound, 0.5f);
+                
                 enabled = false;
                 GetComponent<CapsuleCollider2D>().enabled = false;
                 keeperRange.GetComponent<CircleCollider2D>().enabled = false;

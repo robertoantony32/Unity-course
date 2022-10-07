@@ -11,6 +11,11 @@ namespace GameFolder.Scripts.Player.Movement
    {
       private Rigidbody2D _rb;
       private float _dir;
+      public AudioSource _audioSource;
+      public AudioClip attack1Sound;
+      public AudioClip attack2Sound;
+      public AudioClip damageSound;
+      public AudioClip dashSound;
       
       
       public Transform floorCollider;
@@ -32,6 +37,7 @@ namespace GameFolder.Scripts.Player.Movement
       
       private void Awake()
       {
+         _audioSource = GetComponent<AudioSource>();
          floorCollider.GetComponent<FloorCollider>();
          _animator = playerRender.GetComponent<Animator>();
          _charater = GetComponent<Charater>();
@@ -62,6 +68,8 @@ namespace GameFolder.Scripts.Player.Movement
          dashTime += Time.deltaTime;
          if (Input.GetButtonDown("Fire2") && dashTime > 1)
          {
+            _audioSource.PlayOneShot(dashSound, 0.5f);
+            
             dashTime = 0;
             _animator.Play("dash_animation", -1);
             _rb.velocity = Vector2.zero;
@@ -81,6 +89,16 @@ namespace GameFolder.Scripts.Player.Movement
             
             comboTime = 0;
             _animator.Play("Attack" + comboNum, -1);
+
+            switch (comboNum)
+            {
+               case 1:
+                  _audioSource.PlayOneShot(attack1Sound, 0.5f);
+                  break;
+               case 2:
+                  _audioSource.PlayOneShot(attack2Sound, 0.5f);
+                  break;
+            }
          }
 
          if (comboTime >= 1)

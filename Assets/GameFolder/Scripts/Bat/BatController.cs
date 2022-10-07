@@ -27,7 +27,7 @@ namespace GameFolder.Scripts.Bat
             if (Vector2.Distance(transform.position, player.GetComponent<CapsuleCollider2D>().bounds.center) > 1f)
             {
                 attackTime = 0;
-                transform.position = Vector2.MoveTowards(transform.position, player.position, 2f * Time.deltaTime);
+                transform.position = Vector2.MoveTowards(transform.position, player.position, 2.7f * Time.deltaTime);
             }
             else
             {

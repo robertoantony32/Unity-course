@@ -14,7 +14,7 @@ public class Charater : MonoBehaviour
 
 
     private void Awake()
-    {
+    {        
         _render = render.GetComponent<Animator>();
     }
 
@@ -32,5 +32,6 @@ public class Charater : MonoBehaviour
         life -= value;
         _render.Play("PlayerDamage", 1);
         cam.GetComponent<Animator>().Play("CameraPlayerDamage", -1);
+        GetComponent<PlayerController>()._audioSource.PlayOneShot(GetComponent<PlayerController>().damageSound);
     }
 }
