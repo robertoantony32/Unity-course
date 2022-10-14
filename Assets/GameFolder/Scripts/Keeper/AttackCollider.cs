@@ -8,7 +8,6 @@ public class AttackCollider : MonoBehaviour
     {
         if (col.CompareTag("Player"))
         {
-            Debug.Log("caralho");
             col.GetComponent<Charater>().PlayerDamage(1);
         }
     }

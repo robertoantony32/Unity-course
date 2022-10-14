@@ -1,16 +1,18 @@
-
-using System.Net.Mime;
 using GameFolder.Scripts.Player.Movement;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+
 
 public class Charater : MonoBehaviour
 {
     public int life;
     public Transform render;
     private Animator _render;
+    private PlayerController player;
+
     public Transform cam;
+    public TextMeshProUGUI heartCountText;
 
 
     private void Awake()
@@ -20,7 +22,8 @@ public class Charater : MonoBehaviour
 
     private void Update()
     {
-        if (life <= 0)
+        
+        if (life <= 0 && !transform.name.Equals("BossBrain"))
         {
             _render.Play("die_animation", -1);
         }

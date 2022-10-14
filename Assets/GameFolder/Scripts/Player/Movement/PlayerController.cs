@@ -20,6 +20,9 @@ namespace GameFolder.Scripts.Player.Movement
       
       public Transform floorCollider;
       public Transform playerRender;
+      public Transform gameOverScreen;
+      public Transform pauseScreen;
+      
 
       public int comboNum;
       private float comboTime;
@@ -57,12 +60,19 @@ namespace GameFolder.Scripts.Player.Movement
          }
          
          
-         heartCountText.text = _charater.life.ToString();
+         heartCountText.text = "x" + _charater.life;
 
          if (_charater.life <= 0)
          {
+            gameOverScreen.GetComponent<GameOver>().enabled = true;
             GetComponent<Rigidbody2D>().simulated = false;
             enabled = false;
+         }
+
+
+         if (Input.GetButtonDown("Cancel"))
+         {
+            pauseScreen.GetComponent<Pause>().enabled = !pauseScreen.GetComponent<Pause>().enabled;
          }
 
          dashTime += Time.deltaTime;
@@ -73,7 +83,9 @@ namespace GameFolder.Scripts.Player.Movement
             dashTime = 0;
             _animator.Play("dash_animation", -1);
             _rb.velocity = Vector2.zero;
+            _rb.gravityScale = 0;
             _rb.AddForce(new Vector2(playerRender.localScale.x * dashForce,0));
+            Invoke("RestoreGravityScale", 0.5f);
          }
          
 
@@ -137,5 +149,16 @@ namespace GameFolder.Scripts.Player.Movement
          }
       
       }
+
+      public void DestroyPlayer()
+      {
+         Destroy(transform.gameObject);
+      }
+
+      void RestoreGravityScale()
+      {
+         _rb.gravityScale = 6;
+      }
+      
    }
 }
