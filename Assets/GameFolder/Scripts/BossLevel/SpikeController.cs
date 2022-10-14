@@ -6,6 +6,8 @@ using UnityEngine;
 public class SpikeController : MonoBehaviour
 {
     [SerializeField] Transform boss;
+
+    public AudioClip sound;
     private void OnTriggerEnter2D(Collider2D col)
     {
         if (col.CompareTag("Enemy"))
@@ -16,11 +18,19 @@ public class SpikeController : MonoBehaviour
             col.transform.localPosition = Vector3.zero;
         }
     }
-    
+
+
+    public void CollisionSound()
+    {
+        GetComponent<AudioSource>().PlayOneShot(sound);
+    }
     
     public void ReleaseBoss()
     {
-        boss.GetComponent<BossController>().enabled = true;
-        boss.parent = null;
+        if (boss != null)
+        {
+            boss.GetComponent<BossController>().enabled = true;
+            boss.parent = null;
+        }
     }
 }

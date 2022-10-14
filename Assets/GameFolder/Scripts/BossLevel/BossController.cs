@@ -12,13 +12,23 @@ public class BossController : MonoBehaviour
     public Transform laser;
     public float laserTime;
 
+    public AudioClip bossLaugh;
+    public AudioClip bossLaser;
+
     private void Start()
     {
         targetPosition = A.position;
+        
+        BossLaugh();
     }
 
     void Update()
     {
+        if (GetComponent<Charater>().life <= 0)
+        {
+            return;
+        }
+        
         laserTime += Time.deltaTime;
         if (laserTime > 6)
         {
@@ -28,6 +38,8 @@ public class BossController : MonoBehaviour
             laser.GetChild(0).GetComponent<TrailRenderer>().Clear();
             laser.position = transform.position;
             laser.gameObject.SetActive(true);
+            
+            GetComponent<AudioSource>().PlayOneShot(bossLaser, 0.5f);
         }
         
         if (transform.position == A.position)
@@ -44,5 +56,12 @@ public class BossController : MonoBehaviour
             targetPosition,
             4 * Time.deltaTime
         );
+    }
+
+
+    private void BossLaugh()
+    {
+        Invoke("BossLaugh", 15);
+        GetComponent<AudioSource>().PlayOneShot(bossLaugh);
     }
 }
